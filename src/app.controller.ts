@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { AppService, ClaimPaymentDTO, PaymentOrder } from './app.service';
+import { AppService } from './app.service';
+import { MintTokenDto } from './dto/mint.token.dto';
 
 @Controller()
 export class AppController {
@@ -14,36 +15,31 @@ export class AppController {
     return this.appService.getTotalSupply();
   }
   @Get('allowance')
-  getAllowance(@Query('from') from: string, @Query('from') to: string) {
+  getAllowance(@Query('from') from: string, @Query('to') to: string) {
     return this.appService.getAllownace(from, to);
   }
-  @Get('transaction-by-hash/:hash')
-  getTransactionByHash(@Param('hash') hash: string) {
-    return this.appService.getTransactionByHash(hash);
-  }
-  @Get('transaction-receipt-by-hash/:hash')
-  getTransactionReceiptByHash(@Param('hash') hash: string) {
-    return this.appService.getTransactionReceiptByHash(hash);
+  @Post('mint-tokens')
+  mintTokens(@Body() payload: MintTokenDto) {
+    return this.appService.mintTokens(payload.to, payload.amount);
   }
 
-  @Post('create-order')
-  createOrder(@Body() body: PaymentOrder) {
-    this.appService.createPaymentOrder(body);
+  @Post('delegate')
+  delegate(@Body('to') to: string) {
+    return this.appService.delegate(to);
   }
-  @Get('list-payment-orders')
-  getListPaymentOrders() {
-    return this.appService.listPaymentOrders();
+
+  @Post('vote')
+  vote(@Body('proposal') proposal: number, @Body('amt') amt: number) {
+    return this.appService.vote(proposal, amt);
   }
-  @Get('get-payment-order')
-  getPaymentOrder(@Query('id') id: string) {
-    return this.appService.getPaymentOrderById(id);
+
+  @Get('vote-power')
+  getVotePower(@Query('address') address: string) {
+    return this.appService.getVotePower(address);
   }
-  @Post('claim-payment')
-  claimPayment(@Body() body: ClaimPaymentDTO) {
-    return this.appService.claimPayment(body);
-  }
-  @Post('request-voting-tokens')
-  requestTokesn(@Body() body: any) {
-    return this.appService.requestTokens(body);
+
+  @Get('vote-balance')
+  getVoteBalance(@Query('address') address: string) {
+    return this.appService.getVoteBalance(address);
   }
 }
